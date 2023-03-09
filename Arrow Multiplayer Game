@@ -1,0 +1,197 @@
+import pygame
+import random
+import os
+from collections import namedtuple
+from abc import ABC, abstractmethod
+
+# Initialize pygame
+pygame.init()
+
+#load Image
+image = pygame.image.load ("Griffin 2D gaming/multiplayership.py/archer.png")
+image = pygame.image.load ('resources/bow2.png')
+
+#used to implement the running and idle
+iddle = 0
+running = 1
+# Set the dimensions of the window
+WINDOW_WIDTH = 640
+WINDOW_HEIGHT = 480
+Lightness_sky_max = 90
+Color_sky = (80, 80, 200)
+Color_grass = (70,200,70)
+color_font = (200,20,20)
+color_rope = (180, 180,180)
+
+# game score
+score_table = [3,2,1]
+#game 'physics'
+gravity = 3
+
+class GameObject(pygame.sprite.Sprite):
+    def __init__(self, img, topleft, speed):
+        super().__init__()
+        self.img = img
+        self._rect = img.get_rect()
+        self._rect.move_ip(topleft)
+        self._speed = speed
+        
+#setting the player dimensions
+Player_width = 70
+player_height = 100
+
+#set the arrow dimensions
+Arrow_width = 50
+Arrow_height = 10
+
+# Set the colors
+WHITE = (255, 255, 255)
+BLACK = (0, 0, 0)
+RED = (255, 0, 0)
+BLUE = (0, 0, 255)
+
+# Set the font
+FONT_SIZE = 24
+FONT = pygame.font.Font(None, FONT_SIZE)
+
+# Create the game window
+WINDOW = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT))
+pygame.display.set_caption("Multiplayer Game")
+
+# Create the players
+player1_x = 50
+player1_y = 50
+player2_x = 590
+player2_y = 430
+
+#Set Game Variables
+player1_score = 0
+player2_score = 0
+player1_hit_score = 0
+player2_hit_score = 0
+player1_special_power = False
+player2_special_power = False
+
+#ued to ser arrow variables
+arrow_speed = 15
+arrow_damage = {"normal": 10, "explosive": 30, "freeze": 0}
+arrow_type = "normal"
+
+#Ser game window
+window= pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT))
+pygame.display.set_caption("Multiplayer Archer Game")
+
+
+# Define the player movement speed
+PLAYER_SPEED = 5
+
+# Create the game loop
+while True:
+    # Handle events
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            pygame.quit()
+            quit()
+#Draw Image on Screen
+    window.blit(image, (0,0))
+
+    # Get the pressed keys
+    keys = pygame.key.get_pressed()
+
+    # Move the players
+    if keys[pygame.K_LEFT]:
+        player1_x -= PLAYER_SPEED
+    if keys[pygame.K_RIGHT]:
+        player1_x += PLAYER_SPEED
+    if keys[pygame.K_UP]:
+        player1_y -= PLAYER_SPEED
+    if keys[pygame.K_DOWN]:
+        player1_y += PLAYER_SPEED
+
+    if keys[pygame.K_a]:
+        player2_x -= PLAYER_SPEED
+    if keys[pygame.K_d]:
+        player2_x += PLAYER_SPEED
+    if keys[pygame.K_w]:
+        player2_y -= PLAYER_SPEED
+    if keys[pygame.K_s]:
+        player2_y += PLAYER_SPEED
+        
+        class player (pygame.sprite.Sprite):
+            def __init__(self, x, y):
+                super().__init__()
+                self.image = pygame.Surface(Player_width, player_height)
+                self.image.fill(RED)
+                self.rect = self.image.get_rect()
+                self.rect.x = x
+                self.rect.y = y
+                self.health = 1000
+                
+    # Draw the players
+    WINDOW.fill(WHITE)
+    pygame.draw.circle(WINDOW, RED, (player1_x, player1_y), 10)
+    pygame.draw.circle(WINDOW, BLUE, (player2_x, player2_y), 10)
+
+    
+    #define the arrow class
+    class Arrow(pygame.sprite.Sprite):
+        def __init__(self, x, y, direction):
+            super(). __init__()
+            self.image = pygame.Surface(Arrow_width, Arrow_height)
+            self.image.fill(BLACK)
+            self.rect = self.image.get_rect()
+            self.rect.x = x
+            self.rect.y = y
+            self.direction = direction
+            self.damage = arrow_damage[arrow_type]
+    def update(Self):
+        if Self.direction == "right":
+            Self.rect.x += arrow_speed
+        elif Self.direction == "left":
+            Self.rect.x -= arrow_speed
+        elif Self.direction == "up":
+            Self.rect.y -= arrow_speed
+        elif Self.direction == "down":
+            Self.rect.y += arrow_speed
+        if Self.rect.right > WINDOW_WIDTH or Self.rect.left < 0 or Self.rect.top <  0 or Self.rect.bottom > WINDOW_HEIGHT:
+            Self.kill()
+            
+    def collide(Self, player):
+        if Self.rect.colliderect(player.rect):
+            player.health -= Self.damage
+            if player == player1_x:
+                global player2_score
+                player2_score += Self.damage
+                global player1_hit_score
+                player1_hit_score += Self.damage
+            elif player == player2_x:
+                global player1_score
+                player1_score += Self.damage
+                global player2_hit_score
+                player2_score +=Self.damage
+            Self.kill()
+    #Define the class power
+    class Power(pygame.sprite.Sprite):
+        def __init__(self, x, y, player):
+            super().__init__()
+            self.image = pygame.Surface((100,100))
+            self.image.fill(RED)
+        ##used to classify the bow
+        class Bow(GameObject):
+                rope_top = (54,20)
+                rope_bot = (54,180)
+            #animations
+        rope_states = 10
+        pos_init = (20,0)
+        speed=[0,8]
+        ammo_max = 15
+        force_min = 10
+        force_max = 50
+        time_force_s = 0.7
+        time_cooldown_s = 1
+        #used to keep track of one instance
+        instance = pygame.sprite.GroupSingle()
+    def __init__(self, context):
+        #used to create a bow, and keeo track
+    # Update the screen
+    pygame.display.update()
