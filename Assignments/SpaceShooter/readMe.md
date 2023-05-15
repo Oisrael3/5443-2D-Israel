@@ -5,7 +5,7 @@
 Asteroids Spaceshooter is a cooperative multiplayer game where the players work together to destroy (shoot) as many asteroids as possible without dying. The players have recharging shields to assist in protecting themselves from the asteroids. When all players are dead, the game is over.
 
 ## repository link 
-![Izzyrepo](https://github.com/Oisrael3/Asteriods-)
+[Izzyrepo](https://github.com/Oisrael3/Asteriods-)
 
 ## Files
 
